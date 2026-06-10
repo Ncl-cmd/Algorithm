@@ -439,7 +439,7 @@ def bfs_warmup(graph: dict[int, list[int]], start: int) -> list[int]:
             for neighbor in graph[current_node]:
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    queue.append(neighbor)
+                    queue.append(neighbor)              # ❌✅ queue.append ✅❌
         return result
 
 
@@ -524,27 +524,22 @@ def dp_warmup(n: int) -> int:
         n=3  -> 3
         n=5  -> 8
     """
+    # Base cases
+    if n <= 0:
+        return 0
+    if n <= 2:
+        return n
+    # Initialization for step 1 and step 2
+    first = 1  # ways(1)
+    second = 2  # ways(2)
 
-    def climbStairs(n):
-        # Base cases
-        if n <= 0:
-            return 0
-        if n == 1:
-            return 1
-        if n == 2:
-            return 2
+    # Bottom-up calculation up to step n
+    for _ in range(3, n + 1):
+        current = first + second
+        first = second
+        second = current
 
-        # Initialization for step 1 and step 2
-        first = 1  # ways(1)
-        second = 2  # ways(2)
-
-        # Bottom-up calculation up to step n
-        for _ in range(3, n + 1):
-            current = first + second
-            first = second
-            second = current
-
-        return second
+    return second
 
 
 def dp_interview(amount: int, coins: list[int]) -> int:
@@ -564,23 +559,21 @@ def dp_interview(amount: int, coins: list[int]) -> int:
         amount=3,  coins=[2]       -> -1
         amount=0,  coins=[1]       -> 0
     """
+    # Initialize the DP table with a value representing infinity
+    # amount + 1 is safe because you can never need more than 'amount' coins (using 1-cent coins)
+    dp = [float('inf')] * (amount + 1)
 
-    def coinChange(coins, amount):
-        # Initialize the DP table with a value representing infinity
-        # amount + 1 is safe because you can never need more than 'amount' coins (using 1-cent coins)
-        dp = [float('inf')] * (amount + 1)
+    # Base case: 0 coins are needed to make an amount of 0
+    dp[0] = 0
 
-        # Base case: 0 coins are needed to make an amount of 0
-        dp[0] = 0
+    # Compute the minimum coins for every sub-amount from 1 to 'amount'
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if i - coin >= 0:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
 
-        # Compute the minimum coins for every sub-amount from 1 to 'amount'
-        for i in range(1, amount + 1):
-            for coin in coins:
-                if i - coin >= 0:
-                    dp[i] = min(dp[i], dp[i - coin] + 1)
-
-        # If the target amount remains infinity, it means it is impossible to make
-        return dp[amount] if dp[amount] != float('inf') else -1
+    # If the target amount remains infinity, it means it is impossible to make
+    return dp[amount] if dp[amount] != float('inf') else -1
 
 
 # =============================================================================
@@ -605,26 +598,25 @@ def stack_warmup(s: str) -> bool:
         "{[]}"     -> True
     """
 
-    def isValid(s: str) -> bool:
-        # Hash map to instantly look up corresponding opening brackets
-        mapping = {")": "(", "}": "{", "]": "["}
-        stack = []
+    # Hash map to instantly look up corresponding opening brackets
+    mapping = {")": "(", "}": "{", "]": "["}
+    stack = []
 
-        for char in s:
-            # If the character is a closing bracket
-            if char in mapping:
-                # Pop the top element from stack if not empty, else use a dummy value
-                top_element = stack.pop() if stack else '#'
+    for char in s:
+        # If the character is a closing bracket
+        if char in mapping:
+            # Pop the top element from stack if not empty, else use a dummy value
+            top_element = stack.pop() if stack else '#'
 
-                # The popped opening bracket must match the required one
-                if mapping[char] != top_element:
-                    return False
-            else:
-                # It's an opening bracket, push it onto the stack
-                stack.append(char)
+            # The popped opening bracket must match the required one
+            if mapping[char] != top_element:
+                return False
+        else:
+            # It's an opening bracket, push it onto the stack
+            stack.append(char)
 
-        # If the stack is empty, all brackets were matched correctly
-        return len(stack) == 0
+    # If the stack is empty, all brackets were matched correctly
+    return len(stack) == 0
 
 
 def stack_interview(temperatures: list[int]) -> list[int]:
