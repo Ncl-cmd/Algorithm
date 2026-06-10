@@ -61,15 +61,21 @@ def two_pointers_interview(nums: list[int], target: int) -> list[int]:
         [1, 4, 6, 8],   target=10  -> [2, 3]
         [-3, 0, 4, 8],  target=5   -> [1, 4]
     """
-    k = len(nums)
-    # print(f"The target sum is {target} on the input string: {nums}, whose length is {k}")
-    for i in range(k):  # range outputs 0...(k-1)           if k=4, range 0,1,2,3
-        for j in range(k - 1, i, -1):  # range will start at k down to i   if i=1, range 3,2,1
-            # print(f"i:{i}  j:{j}  ",end="")
-            # print(f"i+j:{nums[i]+nums[j]}")
-            if nums[i] + nums[j] == target:
-                return [i + 1, j + 1]
-    return []
+
+    left = 0
+    right = len(nums) - 1
+
+    while left < right:
+        current_sum = nums[left] + nums[right]
+
+        if current_sum == target:
+            return [left + 1, right + 1]
+        elif current_sum < target:
+            left += 1
+        else:
+            right -= 1
+
+    return []  # Guaranteed by constraints to not be reached
 
 
 # =============================================================================
@@ -439,7 +445,7 @@ def bfs_warmup(graph: dict[int, list[int]], start: int) -> list[int]:
             for neighbor in graph[current_node]:
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    queue.append(neighbor)              # ❌✅ queue.append ✅❌
+                    queue.append(neighbor)  # ❌✅ queue.append ✅❌
         return result
 
 
